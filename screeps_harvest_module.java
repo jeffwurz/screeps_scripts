@@ -8,12 +8,24 @@
  module.exports = function (creep) {
 
 	if(creep.energy < creep.energyCapacity) {
-		var sources = creep.room.find(Game.SOURCES);
-		creep.moveTo(sources[0]);
-		creep.harvest(sources[0]);
+	    var source = creep.pos.findNearest(Game.SOURCES, {
+    		filter: function(object) {
+        		return object.energy > 0;
+    		}
+		});
+		if(!creep.memory.mineSource){
+		    creep.memory.mineSource = source.id;
+		    console.log(creep.name + " will mine source: " + source.id)
+		}
+		//Add checks to compare if any enemies are in the regions surrounding
+        if(source) {
+          creep.moveTo(source);
+          creep.harvest(source);
+        }
 	}
 	else {
-		creep.moveTo(Game.spawns.Spawn1);
-		creep.transferEnergy(Game.spawns.Spawn1)
+	    var spawn = creep.pos.findNearest(Game.MY_SPAWNS)
+		creep.moveTo(spawn)
+		creep.transferEnergy(spawn);
 	}
 }
